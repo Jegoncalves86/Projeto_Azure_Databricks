@@ -11,10 +11,8 @@ resource_path_volume = (
 
 def buscar_caminho(camada: str) -> str:
     """Retorna o caminho em formato string baseado na camada informada."""
-    # Tratando o parâmetro para minúsculas para evitar erros de digitação (ex: 'Bronze' virar 'bronze')
     camada_tratada = camada.lower()
 
-    # Correção da Sintaxe: Atribuição correta dentro de cada bloco condicional
     if camada_tratada == "bronze":
         caminho = bronze_path
     elif camada_tratada == "silver":
@@ -33,29 +31,28 @@ def buscar_caminho(camada: str) -> str:
     return caminho
 
 def gerar_tabela_temporaria():
-    spark = SparkSession.getActiveSession()
-    bronze_path = buscar_caminho("bronze")
+    spark = SparkSession.builder.getOrCreate()
+    caminho_bronze = buscar_caminho("bronze")
     
+    # Removida a barra extra antes dos nomes, pois caminho_bronze já termina com '/'
     bronze_map = {
-        "tmp_bronze_brands":     f"{bronze_path}/brands",
-        "tmp_bronze_categories": f"{bronze_path}/categories",
-        "tmp_bronze_customers":  f"{bronze_path}/customers",
-        "tmp_bronze_order_items":f"{bronze_path}/order_items",
-        "tmp_bronze_orders":     f"{bronze_path}/orders",
-        "tmp_bronze_products":   f"{bronze_path}/products",
-        "tmp_bronze_staffs":     f"{bronze_path}/staffs",
-        "tmp_bronze_stocks":     f"{bronze_path}/stocks",
-        "tmp_bronze_stores":     f"{bronze_path}/stores"}
+        "tmp_bronze_brands":      f"{caminho_bronze}brands",
+        "tmp_bronze_categories":  f"{caminho_bronze}categories",
+        "tmp_bronze_customers":   f"{caminho_bronze}customers",
+        "tmp_bronze_order_items": f"{caminho_bronze}order_items",
+        "tmp_bronze_orders":      f"{caminho_bronze}orders",
+        "tmp_bronze_products":    f"{caminho_bronze}products",
+        "tmp_bronze_staffs":      f"{caminho_bronze}staffs",
+        "tmp_bronze_stocks":      f"{caminho_bronze}stocks",
+        "tmp_bronze_stores":      f"{caminho_bronze}stores"
+    }
 
     for view_name, path in bronze_map.items():
-       (spark.read.format('delta')
-         .load(path)
-         .createOrReplaceTempView(view_name))
+        (
+            spark.read.format("delta")
+            .load(path)
+            .createOrReplaceTempView(view_name)
+        )
+        print(f"View '{view_name}' criada com sucesso!")
        
     return bronze_map
-
-  
-
-
-
-    

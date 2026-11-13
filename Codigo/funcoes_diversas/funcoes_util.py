@@ -1,3 +1,5 @@
+from pyspark.sql import SparkSession
+
 # Seus caminhos originais
 bronze_path = "abfss://projetoanac@externalazureanac.dfs.core.windows.net/bikestore/bronze/"
 silver_path = "abfss://projetoanac@externalazureanac.dfs.core.windows.net/bikestore/silver/"
@@ -31,6 +33,7 @@ def buscar_caminho(camada: str) -> str:
     return caminho
 
 def gerar_tabela_temporaria():
+    spark = SparkSession.getActiveSession()
     bronze_path = buscar_caminho("bronze")
     
     bronze_map = {

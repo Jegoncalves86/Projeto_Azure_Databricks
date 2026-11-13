@@ -30,29 +30,27 @@ def buscar_caminho(camada: str) -> str:
 
     return caminho
 
-def gerar_tabela_temporaria():
+def gerar_tabela_temporaria(tabelas: list, camada: str = "bronze"):
+    """
+    Recebe uma lista com os nomes das tabelas e a camada,
+    monta o dicionário automaticamente e cria as views temporárias.
+    """
     spark = SparkSession.builder.getOrCreate()
-    caminho_bronze = buscar_caminho("bronze")
-    
-    # Removida a barra extra antes dos nomes, pois caminho_bronze já termina com '/'
-    bronze_map = {
-        "tmp_bronze_brands":      f"{caminho_bronze}brands",
-        "tmp_bronze_categories":  f"{caminho_bronze}categories",
-        "tmp_bronze_customers":   f"{caminho_bronze}customers",
-        "tmp_bronze_order_items": f"{caminho_bronze}order_items",
-        "tmp_bronze_orders":      f"{caminho_bronze}orders",
-        "tmp_bronze_products":    f"{caminho_bronze}products",
-        "tmp_bronze_staffs":      f"{caminho_bronze}staffs",
-        "tmp_bronze_stocks":      f"{caminho_bronze}stocks",
-        "tmp_bronze_stores":      f"{caminho_bronze}stores"
+    caminho_base = buscar_caminho(camada)  # Reutiliza sua função buscar_caminho!
+
+    # Monta o dicionário automaticamente a partir da lista de nomes
+    mapa_tabelas = {
+        f"tmp_{camada}_{tabela}": f"{caminho_base}{tabela}"
+        for tabela in tabelas
     }
 
-    for view_name, path in bronze_map.items():
+    # Cria as views normalmente
+    for view_name, path in mapa_tabelas.items():
         (
             spark.read.format("delta")
             .load(path)
             .createOrReplaceTempView(view_name)
         )
         print(f"View '{view_name}' criada com sucesso!")
-       
-    return bronze_map
+
+    return mapa_tabelas

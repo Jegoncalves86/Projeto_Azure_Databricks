@@ -1,0 +1,192 @@
+resources:
+  jobs:
+    bikestore_job:
+      name: Bikestore_job
+      tasks:
+        - task_key: 01_Task_pipeline_ext_brands_bronze
+          disabled: false
+          email_notifications: {}
+          notebook_task:
+            notebook_path: ../src/01.bronze/01_pipeline_ext_brands_bronze.ipynb
+            source: WORKSPACE
+          run_if: ALL_SUCCESS
+          timeout_seconds: 0
+          webhook_notifications: {}
+        - task_key: 02_Task_pipeline_ext_categories_bronze
+          disabled: false
+          email_notifications: {}
+          notebook_task:
+            notebook_path: ../src/01.bronze/02_pipeline_ext_categories_bronze.ipynb
+            source: WORKSPACE
+          run_if: ALL_SUCCESS
+          timeout_seconds: 0
+          webhook_notifications: {}
+        - task_key: 03_Task_pipeline_ext_customers_bronze
+          disabled: false
+          email_notifications: {}
+          notebook_task:
+            notebook_path: ../src/01.bronze/03_pipeline_ext_customers_bronze.ipynb
+            source: WORKSPACE
+          run_if: ALL_SUCCESS
+          timeout_seconds: 0
+          webhook_notifications: {}
+        - task_key: 04_Task_pipeline_ext_order_items_bronze
+          disabled: false
+          email_notifications: {}
+          notebook_task:
+            notebook_path: ../src/01.bronze/04_pipeline_ext_order_items_bronze.ipynb
+            source: WORKSPACE
+          run_if: ALL_SUCCESS
+          timeout_seconds: 0
+          webhook_notifications: {}
+        - task_key: 05_Task_pipeline_ext_orders_bronze
+          disabled: false
+          email_notifications: {}
+          notebook_task:
+            notebook_path: ../src/01.bronze/05_pipeline_ext_orders_bronze.ipynb
+            source: WORKSPACE
+          run_if: ALL_SUCCESS
+          timeout_seconds: 0
+          webhook_notifications: {}
+        - task_key: 06_Task_pipeline_ext_products_bronze
+          disabled: false
+          email_notifications: {}
+          notebook_task:
+            notebook_path: ../src/01.bronze/06_pipeline_ext_products_bronze.ipynb
+            source: WORKSPACE
+          run_if: ALL_SUCCESS
+          timeout_seconds: 0
+          webhook_notifications: {}
+        - task_key: 07_Task_pipeline_ext_staffs_bronze
+          disabled: false
+          email_notifications: {}
+          notebook_task:
+            notebook_path: ../src/01.bronze/07_pipeline_ext_staffs_bronze.ipynb
+            source: WORKSPACE
+          run_if: ALL_SUCCESS
+          timeout_seconds: 0
+          webhook_notifications: {}
+        - task_key: 08_Task_pipeline_ext_stocks_bronze
+          disabled: false
+          email_notifications: {}
+          notebook_task:
+            notebook_path: ../src/01.bronze/08_pipeline_ext_stocks_bronze.ipynb
+            source: WORKSPACE
+          run_if: ALL_SUCCESS
+          timeout_seconds: 0
+          webhook_notifications: {}
+        - task_key: 09_Task_pipeline_ext_stores_bronze
+          disabled: false
+          email_notifications: {}
+          notebook_task:
+            notebook_path: ../src/01.bronze/09_pipeline_ext_stores_bronze.ipynb
+            source: WORKSPACE
+          run_if: ALL_SUCCESS
+          timeout_seconds: 0
+          webhook_notifications: {}
+        - task_key: 01_Task_validate_bronze
+          depends_on:
+            - task_key: 05_Task_pipeline_ext_orders_bronze
+            - task_key: 07_Task_pipeline_ext_staffs_bronze
+            - task_key: 03_Task_pipeline_ext_customers_bronze
+            - task_key: 08_Task_pipeline_ext_stocks_bronze
+            - task_key: 01_Task_pipeline_ext_brands_bronze
+            - task_key: 02_Task_pipeline_ext_categories_bronze
+            - task_key: 06_Task_pipeline_ext_products_bronze
+            - task_key: 09_Task_pipeline_ext_stores_bronze
+            - task_key: 04_Task_pipeline_ext_order_items_bronze
+          disabled: false
+          email_notifications: {}
+          notebook_task:
+            notebook_path: ../src/01.bronze/01_pipeline_validate_bronze.ipynb
+            source: WORKSPACE
+          run_if: ALL_SUCCESS
+          timeout_seconds: 0
+          webhook_notifications: {}
+        - task_key: 01_Task_pipeline_trf_product_silver
+          depends_on:
+            - task_key: 01_Task_validate_bronze
+          disabled: false
+          email_notifications: {}
+          notebook_task:
+            notebook_path: ../src/02.silver/01_silver_pipeline_ext_products.ipynb
+            source: WORKSPACE
+          run_if: ALL_SUCCESS
+          timeout_seconds: 0
+          webhook_notifications: {}
+        - task_key: 02_Task_pipeline_trf_orders_silver
+          depends_on:
+            - task_key: 01_Task_validate_bronze
+          disabled: false
+          email_notifications: {}
+          notebook_task:
+            notebook_path: ../src/02.silver/02_silver_pipeline_ext_orders.ipynb
+            source: WORKSPACE
+          run_if: ALL_SUCCESS
+          timeout_seconds: 0
+          webhook_notifications: {}
+        - task_key: 03_Task_pipeline_trf_customers_silver
+          depends_on:
+            - task_key: 01_Task_validate_bronze
+          disabled: false
+          email_notifications: {}
+          notebook_task:
+            notebook_path: ../src/02.silver/03_silver_pipeline_ext_customers.ipynb
+            source: WORKSPACE
+          run_if: ALL_SUCCESS
+          timeout_seconds: 0
+          webhook_notifications: {}
+        - task_key: 02_Task_validate_silver
+          depends_on:
+            - task_key: 01_Task_pipeline_trf_product_silver
+            - task_key: 02_Task_pipeline_trf_orders_silver
+            - task_key: 03_Task_pipeline_trf_customers_silver
+          disabled: false
+          email_notifications: {}
+          notebook_task:
+            notebook_path: ../src/02.silver/02_pipeline_validate_silver.ipynb
+            source: WORKSPACE
+          run_if: ALL_SUCCESS
+          timeout_seconds: 0
+          webhook_notifications: {}
+        - task_key: 01_Task_pipeline_agg_sales_ny_gold
+          depends_on:
+            - task_key: 02_Task_validate_silver
+          disabled: false
+          email_notifications: {}
+          notebook_task:
+            notebook_path: ../src/03.gold/01_gold_pipeline_sales_ny.ipynb
+            source: WORKSPACE
+          run_if: ALL_SUCCESS
+          timeout_seconds: 0
+          webhook_notifications: {}
+        - task_key: 02_Task_pipeline_agg_orders_pending_gold
+          depends_on:
+            - task_key: 02_Task_validate_silver
+          disabled: false
+          email_notifications: {}
+          notebook_task:
+            notebook_path: ../src/03.gold/02_gold_pipeline_orders_pending.ipynb
+            source: WORKSPACE
+          run_if: ALL_SUCCESS
+          timeout_seconds: 0
+          webhook_notifications: {}
+      email_notifications:
+        no_alert_for_skipped_runs: false
+        on_failure:
+          - jgoncalvesm86@gmail.com
+        on_maintenance_complete:
+          - jgoncalvesm86@gmail.com
+      max_concurrent_runs: 1
+      notification_settings:
+        no_alert_for_canceled_runs: false
+        no_alert_for_skipped_runs: false
+      performance_target: PERFORMANCE_OPTIMIZED
+      queue:
+        enabled: true
+      schedule:
+        pause_status: UNPAUSED
+        quartz_cron_expression: 43 1 18 * * ?
+        timezone_id: America/Sao_Paulo
+      timeout_seconds: 0
+      webhook_notifications: {}

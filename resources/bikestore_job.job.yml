@@ -98,7 +98,7 @@ resources:
           disabled: false
           email_notifications: {}
           notebook_task:
-            notebook_path: ../src/01.bronze/01_pipeline_validate_bronze.ipynb
+            notebook_path: ../src/01.bronze/10_pipeline_validate_bronze.ipynb
             source: WORKSPACE
           run_if: ALL_SUCCESS
           timeout_seconds: 0
@@ -144,7 +144,7 @@ resources:
           disabled: false
           email_notifications: {}
           notebook_task:
-            notebook_path: ../src/02.silver/02_pipeline_validate_silver.ipynb
+            notebook_path: ../src/02.silver/04_pipeline_validate_silver.ipynb
             source: WORKSPACE
           run_if: ALL_SUCCESS
           timeout_seconds: 0

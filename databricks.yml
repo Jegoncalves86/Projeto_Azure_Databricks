@@ -1,0 +1,12 @@
+bundle:
+  name: projeto_azure_databricks
+
+include:
+  - resources/*.yml
+
+targets:
+  dev:
+    mode: development
+    default: true
+    workspace:
+      host: https://adb-7405616953586510.10.azuredatabricks.net
